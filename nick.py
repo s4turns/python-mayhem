@@ -15,9 +15,14 @@ class IRCBot:
         self.socket = socket.socket()
         self.socket.connect((self.server, self.port))
 
+        # Add a random character to the default nickname
+        random_char = self.generate_random_symbol()
+        self.default_nickname += random_char
+
         # Ensure the default nickname is unique
         while not self.is_nickname_available(self.default_nickname):
-            self.default_nickname += self.generate_random_symbol()
+            random_char = self.generate_random_symbol()
+            self.default_nickname = self.default_nickname[:-1] + random_char
 
         self.send("NICK {}".format(self.default_nickname))
         self.send("USER {} 0 * :{}".format(self.default_nickname, self.default_nickname))
@@ -68,11 +73,12 @@ class IRCBot:
                     self.change_nickname(new_nickname)
 
 if __name__ == "__main__":
-    server = ""
+
+    server = "irc.servercentral.net"
     port = 6667
     channel = ""
     channel_key = ""
-    default_nickname = "bo4t"
+    default_nickname = ""
 
     bot = IRCBot(server, port, channel, channel_key, default_nickname)
     bot.connect()
